@@ -42,7 +42,7 @@ export default {
     },
     fileUploadHandler(url) {
       let img = new Image();
-      debugger
+      debugger;
       img.src = URL.createObjectURL(url);
       img.onload = async () => {
         const a = tf.browser.fromPixels(img);
