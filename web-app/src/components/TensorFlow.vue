@@ -1,23 +1,48 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col>
-        <input type="file" @change="onFileChange" />
+  <v-stepper v-model="stepperPaging" :vertical="true" :alt-labels="true">
+    <v-stepper-step :complete="stepperPaging > 1" step="1">上傳圖片</v-stepper-step>
 
-        <div>
-          <img id="preview" v-if="url" :src="url" />
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-btn type="file" center>Upload</v-btn>
-        <p>You are a {{prediction}}</p>
-        <p>{{blue}}% Blue</p>
-        <p>{{yellow}}% Yellow</p>
-      </v-col>
-    </v-row>
-  </v-container>
+    <v-stepper-content step="1">
+      <v-container>
+        <v-row align="center" justify="center">
+          <v-card height="400" max-width="500" class="pa-5">
+            <input type="file" @change="onFileChange" />
+            <img id="preview" v-if="url" :src="url" />
+          </v-card>
+        </v-row>
+        <v-row align="center" justify="center">
+          <v-col cols="12">
+            <v-btn :disabled="url==null" block color="primary" @click="stepperPaging = 2">計算</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-stepper-content>
+
+    <v-stepper-step :complete="stepperPaging > 2" step="2">結果</v-stepper-step>
+
+    <v-stepper-content step="2">
+      <v-card class="mb-12 pa-5" color="blue lighten-5" height="200px">
+        <h1>大數據分析結果: {{prediction}}</h1>
+        <p>
+          <v-system-bar color="blue lighten-2" :style="'width:'+blue*100+'%'">
+            <span style="white-space:nowrap">{{blue*100}}% 愛國</span>
+          </v-system-bar>
+        </p>
+        <p>
+          <v-system-bar color="yellow lighten-2" :style="'width:'+yellow*100+'%'">
+            <span style="white-space:nowrap">{{yellow*100}}% 港獨</span>
+          </v-system-bar>
+        </p>
+      </v-card>
+      <v-container>
+        <v-row>
+          <v-col cols="12">
+            <v-btn block color="primary" @click="stepperPaging = 1">重來</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-stepper-content>
+  </v-stepper>
 </template>
 
 <script>
@@ -31,19 +56,25 @@ export default {
       yellow: 0,
       prediction: "",
       model: null,
-      url: null
+      url: null,
+      stepperPaging: 1
     };
+  },
+  watch: {
+    stepperPaging: function(val) {
+      if (val == 2) {
+        this.fileUploadHandler();
+      }
+    }
   },
   methods: {
     onFileChange(e) {
-      const file = e.target.files[0];
-      this.url = URL.createObjectURL(file);
-      this.fileUploadHandler(file);
+      this.file = e.target.files[0];
+      this.url = URL.createObjectURL(this.file);
     },
-    fileUploadHandler(url) {
+    fileUploadHandler() {
       let img = new Image();
-      debugger;
-      img.src = URL.createObjectURL(url);
+      img.src = URL.createObjectURL(this.file);
       img.onload = async () => {
         const a = tf.browser.fromPixels(img);
         let offset = tf.scalar(127.5);
@@ -57,10 +88,10 @@ export default {
         const aa = aaa;
         const prediction = await this.model.predict(aa);
         console.log(prediction.dataSync());
-        const classNames = ["blue", "yellow"];
+        const classNames = ["藍", "黃"];
         let dataSync = prediction.dataSync();
-        this.blue = dataSync[0];
-        this.yellow = dataSync[1];
+        this.blue = dataSync[0].toFixed(2);
+        this.yellow = dataSync[1].toFixed(2);
         this.prediction = classNames[tf.argMax(prediction, 1).dataSync()];
       };
     }
@@ -74,8 +105,8 @@ export default {
 
 <style scoped>
 #preview {
-  width: 500px;
-  height: 500px;
+  width: 75%;
+  height: 75%;
   object-fit: contain;
 }
 </style>
