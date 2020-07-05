@@ -18,19 +18,31 @@
       </v-container>
     </v-stepper-content>
 
-    <v-stepper-step :complete="stepperPaging > 2" step="2">結果</v-stepper-step>
+    <v-stepper-step :complete="stepperPaging > 2" step="2">雲端分析</v-stepper-step>
 
     <v-stepper-content step="2">
-      <v-card class="mb-12 pa-5" color="blue lighten-5" height="200px">
+      <v-container>
+        <v-row align="center" justify="center">
+          <v-progress-circular :size="70" :width="7" color="blue" indeterminate></v-progress-circular>
+          <h1 class="ml-5">分析中...</h1>
+        </v-row>
+      </v-container>
+    </v-stepper-content>
+
+    <v-stepper-step :complete="stepperPaging > 3" step="3">結果</v-stepper-step>
+
+    <v-stepper-content step="3">
+      <v-card class="mb-3 pa-5" color="blue lighten-5">
+        <img class="width:100%;pa-5" id="preview" v-if="url" :src="url" />
         <h1>大數據分析結果: {{prediction}}</h1>
         <p>
           <v-system-bar color="blue lighten-2" :style="'width:'+blue*100+'%'">
-            <span style="white-space:nowrap">{{blue*100}}% 愛國</span>
+            <span style="white-space:nowrap">{{blue*100}}% 藍</span>
           </v-system-bar>
         </p>
         <p>
           <v-system-bar color="yellow lighten-2" :style="'width:'+yellow*100+'%'">
-            <span style="white-space:nowrap">{{yellow*100}}% 港獨</span>
+            <span style="white-space:nowrap">{{yellow*100}}% 黃</span>
           </v-system-bar>
         </p>
       </v-card>
@@ -64,7 +76,13 @@ export default {
     stepperPaging: function(val) {
       if (val == 2) {
         this.fileUploadHandler();
+        let that = this;
+        //Loading....
+        setTimeout(function() {
+          that.stepperPaging = 3;
+        }, 3000);
       }
+      
     }
   },
   methods: {
@@ -94,6 +112,7 @@ export default {
         this.yellow = dataSync[1].toFixed(2);
         this.prediction = classNames[tf.argMax(prediction, 1).dataSync()];
       };
+      
     }
   },
   mounted: async function() {
