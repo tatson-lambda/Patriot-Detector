@@ -7,7 +7,7 @@
         <v-row align="center" justify="center">
           <v-card height="400" max-width="500" class="pa-5">
             <input type="file" @change="onFileChange" />
-            <img id="preview" v-if="url" :src="url" />
+            <img id="preview" style=" margin-left: auto; margin-right: auto; display: block;" v-if="url" :src="url" />
           </v-card>
         </v-row>
         <v-row align="center" justify="center">
@@ -33,7 +33,13 @@
 
     <v-stepper-content step="3">
       <v-card class="mb-3 pa-5" color="blue lighten-5">
-        <img class="width:100%;pa-5" id="preview" v-if="url" :src="url" />
+        <img
+          class="pa-5"
+          style=" margin-left: auto; margin-right: auto; display: block;"
+          id="preview"
+          v-if="url"
+          :src="url"
+        />
         <h1>大數據分析結果: {{prediction}}</h1>
         <p>
           <v-system-bar color="blue lighten-2" :style="'width:'+blue*100+'%'">
@@ -82,7 +88,6 @@ export default {
           that.stepperPaging = 3;
         }, 3000);
       }
-      
     }
   },
   methods: {
@@ -112,7 +117,6 @@ export default {
         this.yellow = dataSync[1].toFixed(2);
         this.prediction = classNames[tf.argMax(prediction, 1).dataSync()];
       };
-      
     }
   },
   mounted: async function() {
