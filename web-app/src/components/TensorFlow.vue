@@ -7,7 +7,12 @@
         <v-row align="center" justify="center">
           <v-card height="400" max-width="500" class="pa-5">
             <input type="file" @change="onFileChange" />
-            <img id="preview" style=" margin-left: auto; margin-right: auto; display: block;" v-if="url" :src="url" />
+            <img
+              id="preview"
+              style=" margin-left: auto; margin-right: auto; display: block;"
+              v-if="url"
+              :src="url"
+            />
           </v-card>
         </v-row>
         <v-row align="center" justify="center">
@@ -95,28 +100,32 @@ export default {
       this.file = e.target.files[0];
       this.url = URL.createObjectURL(this.file);
     },
-    fileUploadHandler() {
+    async fileUploadHandler() {
       let img = new Image();
       img.src = URL.createObjectURL(this.file);
-      img.onload = async () => {
-        const a = tf.browser.fromPixels(img);
-        let offset = tf.scalar(127.5);
-        let a2 = a
-          .sub(offset)
-          .div(offset)
-          .expandDims();
-        const aaa = tf.image.resizeBilinear(a2, [224, 224]);
-        console.log(aaa.arraySync());
-        //const aa = tf.stack([aaa])
-        const aa = aaa;
-        const prediction = await this.model.predict(aa);
-        console.log(prediction.dataSync());
-        const classNames = ["藍", "黃"];
-        let dataSync = prediction.dataSync();
-        this.blue = dataSync[0].toFixed(2);
-        this.yellow = dataSync[1].toFixed(2);
-        this.prediction = classNames[tf.argMax(prediction, 1).dataSync()];
-      };
+      var test = new Promise((resolve) => {
+        img.onload = async () => {
+          const a = tf.browser.fromPixels(img);
+          let offset = tf.scalar(127.5);
+          let a2 = a
+            .sub(offset)
+            .div(offset)
+            .expandDims();
+          const aaa = tf.image.resizeBilinear(a2, [224, 224]);
+          console.log(aaa.arraySync());
+          //const aa = tf.stack([aaa])
+          const aa = aaa;
+          const prediction = await this.model.predict(aa);
+          console.log(prediction.dataSync());
+          const classNames = ["藍", "黃"];
+          let dataSync = prediction.dataSync();
+          this.blue = dataSync[0].toFixed(2);
+          this.yellow = dataSync[1].toFixed(2);
+          this.prediction = classNames[tf.argMax(prediction, 1).dataSync()];
+          resolve();
+        };
+      });
+      await test;
     }
   },
   mounted: async function() {
