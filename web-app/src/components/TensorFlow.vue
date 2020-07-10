@@ -5,7 +5,7 @@
     <v-stepper-content step="1">
       <v-container>
         <v-row align="center" justify="center">
-          <v-card height="400" max-width="500" class="pa-5">
+          <v-card height="400"  class="pa-5 ma-1">
             <input type="file" @change="onFileChange" />
             <img
               id="preview"
@@ -40,7 +40,7 @@
       <v-card class="mb-3 pa-5" color="blue lighten-5">
         <img
           class="pa-5"
-          style=" margin-left: auto; margin-right: auto; display: block;"
+          style=" margin-left: auto; margin-right: auto; display: block;max-width:400pt; max-height:400pt;"
           id="preview"
           v-if="url"
           :src="url"
