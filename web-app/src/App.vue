@@ -1,32 +1,30 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-     <h1>做個愛國香港人</h1>
-      <v-spacer></v-spacer>    
-    </v-app-bar>
+    <div>
+    <v-app-bar app color="primary" dense dark>
+      <v-toolbar-title>做個愛國香港人</v-toolbar-title>
 
+      <v-spacer></v-spacer>
+    </v-app-bar>
+    </div>
     <v-content>
-      <TensorFlow/>
+      <TensorFlow />
     </v-content>
   </v-app>
 </template>
 
 <script>
-import TensorFlow from './components/TensorFlow';
+import TensorFlow from "./components/TensorFlow";
 
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
-    TensorFlow,
+   TensorFlow
   },
 
   data: () => ({
     //
-  }),
+  })
 };
 </script>
